@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>声明式渲染</title>
+  <title>基本的例子</title>
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
 </head>
 
@@ -44,7 +44,7 @@
   <!--7、基本的组件概念-->
   <div id="app7">
   	<ol>
-  		<todo-item v-bind:todo="item" v-for="item in todos"></todo-item>
+  		<todo-list v-bind:todo="item" v-for="item in todos" :key="item.id"></todo-list>
   	</ol>
   </div>
   <!--8、methods与commputed-->
@@ -52,6 +52,40 @@
   	<h3>{{ time }}</h3>
   	<h2>computed:{{ now }}</h2>
   	<!-- <h3>methods: {{ nowM }}</h3> -->
+  </div>
+  <hr>
+  <!--9、在v-if与v-for中使用template-->
+  <div id="app9">
+    <template v-if="Math.random() > 0.5">
+      <h3>随机数大于0.5</h3>
+      <p>这里有一个模板</p>
+    </template>
+    <template v-else>
+      <h3>随机数小于0.5</h3>
+      <span>这里也有模板！</span>
+    </template>
+
+    <template v-for="(item, index) in items">
+      <p><span>{{ index }}</span><b>{{ item }}</b></p>
+    </template>
+  </div>
+  <hr>
+  <!--10、经典的todolist例子-->
+  <div id="app10">
+    <input v-model="newTodo" @keyup.enter="addTodo">
+    <ul>
+      <li is="todo-app" 
+        v-for="(todo,index) in todos" 
+        :title="todo"
+        @remove="todos.splice(index, 1)"></li>
+    </ul>
+  </div>
+
+  <!--11、筛选-->
+  <div id="app11">
+    <ul>
+      <li v-for="n in evenNumbers">{{ n }}</li>
+    </ul>
   </div>
   <script type="text/javascript">
   var app1 = new Vue({
@@ -66,7 +100,7 @@
     data: {
       message: '页面加载于' + new Date()
     }
-  })
+  });
 
   var app3 = new Vue({
     el: "#app3",
@@ -107,7 +141,7 @@
     }
   });
 
-  Vue.component('todo-item', {
+  Vue.component('todo-list', {
   	props:['todo'],
   	template: '<li>{{ todo.text }}</li>'
   })
@@ -115,10 +149,13 @@
   	el: '#app7',
   	data: {
   		todos: [{
+        id:1,
         text: '橘子'
       }, {
+        id:2,
         text: '橙子'
       }, {
+        id:3,
         text: '梨子'
       }]
   	}
@@ -137,8 +174,47 @@
   			},1000);
   		}
   	}
-  })
+  });
 
+  var app9 = new Vue({
+    el: '#app9',
+    data : {
+      items: ['吃饭','睡觉','打豆豆']
+    }
+  });
+
+  Vue.component('todo-app', {
+    props:['title'],
+    template: '<li>{{ title }} <button @click="$emit(\'remove\')">X</button></li>'
+  });
+
+  var app10 = new Vue({
+    el: '#app10',
+    data: {
+      newTodo:'',
+      todos: ['吃饭','睡觉','打豆豆咯']
+    },
+    methods: {
+      addTodo: function() {
+        this.todos.push(this.newTodo);
+        this.newTodo = '';
+      }
+    }
+  });
+
+  var app10 = new Vue({
+    el: '#app11',
+    data: {
+      numbers:[1,2,4,5,6,7,8,9]
+    },
+    computed: {
+      evenNumbers: function() {
+        return this.numbers.filter(function(val) {
+          return val % 2===0;
+        });
+      }
+    }
+  });
   </script>
 </body>
 
