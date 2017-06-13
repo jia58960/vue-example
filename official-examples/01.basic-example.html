@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>声明式渲染</title>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+
+<body>
+  <!--1、简单的文本插值-->
+  <p id="app1">{{ message }}</p>
+  <hr>
+  <!--2、绑定到DOM元素属性-->
+  <div id="app2">
+    <span :title="message">鼠标hover看效果</span>
+    <!--将元素节点的 title 属性和 Vue 实例的 message 属性保持一致-->
+  </div>
+  <hr>
+  <!--3、绑定DOM结构到数据-->
+  <div id="app3">
+    <span v-if="seen">can you see me?try app3.seen = false;</span>
+  </div>
+  <hr>
+  <!--4、处理循环-->
+  <div id="app4">
+    <ol>
+      <li v-for="todo in todos">{{ todo.text }}</li>
+    </ol>
+  </div>
+  <hr>
+  <!--5、处理事件-->
+  <div id="app5">
+    <p>{{ message }}</p>
+    <button @click="reverseMsg">翻转字符串</button>
+  </div>
+  <hr>
+  <!--6、实现表单输入和应用状态之间的双向绑定-->
+  <div id="app6">
+  	<p>{{ message	}}</p>
+    <input v-model="message">
+  </div>
+  <hr>
+  <!--7、基本的组件概念-->
+  <div id="app7">
+  	<ol>
+  		<todo-item v-bind:todo="item" v-for="item in todos"></todo-item>
+  	</ol>
+  </div>
+  <!--8、methods与commputed-->
+  <div id="app8">
+  	<h3>{{ time }}</h3>
+  	<h2>computed:{{ now }}</h2>
+  	<!-- <h3>methods: {{ nowM }}</h3> -->
+  </div>
+  <script type="text/javascript">
+  var app1 = new Vue({
+    el: '#app1',
+    data: {
+      message: 'Hello Vue.js'
+    }
+  });
+
+  var app2 = new Vue({
+    el: '#app2',
+    data: {
+      message: '页面加载于' + new Date()
+    }
+  })
+
+  var app3 = new Vue({
+    el: "#app3",
+    data: {
+      seen: true
+    }
+  });
+
+  var app4 = new Vue({
+    el: "#app4",
+    data: {
+      todos: [{
+        text: '橘子'
+      }, {
+        text: '橙子'
+      }, {
+        text: '梨子'
+      }]
+    }
+  });
+
+  var app5 = new Vue({
+    el: "#app5",
+    data: {
+      message: '点击按钮翻转我'
+    },
+    methods: {
+      reverseMsg: function() {
+        this.message = this.message.split('').reverse().join('');
+      }
+    }
+  });
+
+  var app6 = new Vue({
+    el: '#app6',
+    data: {
+    	message:'Hello,vue.js'
+    }
+  });
+
+  Vue.component('todo-item', {
+  	props:['todo'],
+  	template: '<li>{{ todo.text }}</li>'
+  })
+  var app7 = new Vue({
+  	el: '#app7',
+  	data: {
+  		todos: [{
+        text: '橘子'
+      }, {
+        text: '橙子'
+      }, {
+        text: '梨子'
+      }]
+  	}
+  });
+
+  var app8 = new Vue({
+  	el: '#app8',
+  	data: {
+  		time: Date.now()
+  	},
+  	computed: {
+  		now: function() {
+  			var self = this;
+  			setInterval(()=>{
+  				self.time = new Date().toLocaleString();
+  			},1000);
+  		}
+  	}
+  })
+
+  </script>
+</body>
+
+</html>

@@ -6,13 +6,14 @@
   <title>VUE DEMO</title>
 </head>
 <!--
- * 每个 Vue 实例在被创建之前都要经过一系列的初始化过程。例如，实例需要配置数据观测(data observer)、编译模版、挂载实例
-    到 DOM ，然后在数据变化时更新 DOM 。在这个过程中，实例也会调用一些生命周期钩子 ，这就给我们提供了执行自定义逻辑的机会。生命周期中可调用的钩子函数依次为：beforeCreate、created、beforeMount、mounted、beforeUpdate、 updated 、destroyed。
+ * 每个 Vue 实例在被创建之前都要经过一系列的初始化过程。例如，实例需要配置数据观测(data observer)、编译模版、挂载实例到 DOM ，然后在数据变化时更新 DOM 。在这个过程中，实例也会调用一些生命周期钩子 ，这就给我们提供了执行自定义逻辑的机会。生命周期中可调用的钩子函数依次为：beforeCreate、created、beforeMount、mounted、beforeUpdate、 updated 、destroyed。钩子的 this 指向调用它的 Vue 实例。
+ * 在底层的实现上， Vue 将模板编译成虚拟 DOM 渲染函数。结合响应系统，在应用状态改变时， Vue   能够智能地计算出重新渲染组件的最小代价并应用到 DOM 操作上
+ * 指令的职责就是当其表达式的值改变时相应地将某些行为应用到 DOM 上。比如v-bind指令被用来响应地更新 HTML 属性。v-on指令用于监听 DOM 事件
  * 修饰符：修饰符用于指出一个指令应该以特殊方式绑定，例如<form v-on:submit.prevent="onSubmit"></form>。
  * 过滤器：过滤器可以用在两个地方：Mustache 插值和 v-bind 表达式。另外过滤器应该被添加在 JavaScript 表达式的尾部，由“管道”
-    符(|)指示。vue中的过滤器属性是filters:{filter1:function(){...}}。对于更复杂的数据逻辑操作请使用计算属性。
+    符(|)指示。vue中的过滤器属性是filters:{filter1:function(){...}}。过滤器设计目的就是用于文本转换。另外需注意过滤器函数总接受表达式的值作为第一个参数！给过滤器传参的时候要注意这点。对于更复杂的数据逻辑操作请使用计算属性。对于任何复杂逻辑，你都应当使用计算属性的原因。
     vue中的计算属性是computed:{reverseMsg:function(){...}}。
- * Vue.js 为两个最为常用的指令提供了特别的缩写：v-bind:href->:href和v-on:click->@click。
+  * Vue.js 为两个最为常用的指令提供了特别的缩写：v-bind:href->:href和v-on:click->@click。
  * 我们可以传给v-bind:class一个对象或数组，以动态地切换 class,如：
   v-bind:class="{ active: isActive, 'text-danger': hasError }">
  * 对于内联样式，我们可以用短横线或驼峰命名：<div v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"></div>
@@ -178,6 +179,7 @@
       },
     }
   });
+
   var app1 = new Vue({
     el: '#app',
     data: {
@@ -242,7 +244,7 @@
             }
           }
         }
-      * 当你想要在数据变化响应时，执行异步操作或开销较大的操作，watch是很有用的。联想到yesorno的例子。
+      * 当你想要在数据变化响应时，执行异步操作或开销较大的操作，watch是很有用的。联想到yes or no的例子。
     */
     filters:{
       caplized:function(val) {
