@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>基本的例子</title>
+  <title>基本例子</title>
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
 </head>
 
@@ -46,6 +46,9 @@
   	<ol>
   		<todo-list v-bind:todo="item" v-for="item in todos" :key="item.id"></todo-list>
   	</ol>
+    <simple-countdown></simple-countdown>
+    <simple-countdown></simple-countdown>
+    <simple-countdown></simple-countdown>
   </div>
   <!--8、methods与commputed-->
   <div id="app8">
@@ -141,12 +144,25 @@
     }
   });
 
-  Vue.component('todo-list', {
-  	props:['todo'],
-  	template: '<li>{{ todo.text }}</li>'
-  })
+ /* Vue.component('todo-list', {
+  	
+  })*/
   var app7 = new Vue({
   	el: '#app7',
+    components: { //局部组件
+      'todo-list': {
+        props:['todo'],
+        template: '<li>{{ todo.text }}</li>'
+      },
+      'simple-countdown': {
+        template:"<button @click='counter += 1'>{{ counter }}</button>",
+        data: function() {
+          return {
+            counter:0
+          }
+        }
+      }
+    },
   	data: {
   		todos: [{
         id:1,

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>进阶例子</title>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+	<!--1、radio-->
+	<div id="app1">
+		<label for="male">
+		  <input v-model="sex" id="male" type="radio" value="男">男</label>
+		<label for="female">
+		  <input v-model="sex" id="female" type="radio" value="女">女</label>
+		<p>{{ sex }}</p>
+
+		<hr>
+
+		<!--2、dynamic checkbox-->
+		<template v-for="item in fruits">
+			<label id="item.id"><input id="item.id" v-model="choosedFruits" type="checkbox" :value="item.name">{{ item.name }}</label>
+			<!-- <label for="banana"><input id="banana" v-model="fruits" type="checkbox" value="香蕉">香蕉</label>
+			<label for="orange"><input id="orange" v-model="fruits" type="checkbox" value="桔子">桔子</label>
+			<label for="pear"><input id="pear" v-model="fruits" type="checkbox" value="梨子">梨子</label> -->
+		</template>
+		<p>{{ choosedFruits }}</p>
+		<hr>
+
+		<!--3、dynamic select-->
+		<select name="" v-model="choosedPerson">
+			<option v-for="person in people" :value="person">{{ person }}</option>
+		</select>
+		<p>{{ choosedPerson }}</p>
+	</div>
+	<!--4、在父组件中使用v-on监听子组件触发的事件-->
+	<div id="app2">
+		<p>父组件中的计数器：{{ total }}</p>
+		<button-count	:title="ptitle" @increment-evt="incrementParent" @mouseover.native="mouseroverEvt"></button-count>
+		<button-count	@increment-evt="incrementParent"></button-count>
+	</div>
+	
+
+	<script type="text/javascript">
+		var app1 = new Vue({
+			el: '#app1',
+			data: {
+				sex:'男',
+				fruits: [{id:'apple',name:'苹果'},{id:'banana',name:'香蕉'},{id:'orange',name:'橘子'}],
+				choosedFruits:['苹果'],
+				choosedPerson:'李四',
+				people:['张三','李四','王五']
+			}
+		});
+
+		var app2 = new Vue({
+			el: '#app2',
+			components: {
+				"button-count": {
+					props: {
+						title: {
+							type: String,
+							//required: true,
+							default:'初始化的标题'
+						}
+					},
+					template: "<button title='title' @click='incrementChild'>{{ count }}</button>",
+					data: function() {
+						return {
+							count: 0
+						};
+					},
+					methods: {
+						incrementChild: function() {
+							this.count +=1;
+							this.$emit('increment-evt');
+							this.$emit('mouseover');
+						}
+					}
+				}
+			},
+			data: {
+				total: 0,
+				ptitle:'父组件传递给子组件的标题'
+			},
+			methods: {
+				incrementParent: function() {
+					console.log('aaa');
+					this.total++;
+				},
+				mouseroverEvt: function() {
+					this.ptitle = '改变了父组件的标题内容';
+				}
+			}
+		});
+	</script>
+</body>
+</html>
