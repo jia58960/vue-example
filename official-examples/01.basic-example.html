@@ -4,6 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <title>基本例子</title>
+  <style>
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity .5s
+    }
+    .fade-enter, .fade-leave-active {
+      opacity: 0
+    }
+  </style>
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
 </head>
 
@@ -19,7 +27,10 @@
   <hr>
   <!--3、绑定DOM结构到数据-->
   <div id="app3">
-    <span v-if="seen">can you see me?try app3.seen = false;</span>
+    <button @click="seen=!seen">点我切换</button>
+    <transition name="fade">
+      <span v-if="seen">can you see me?try app3.seen = false;</span>
+    </transition>
   </div>
   <hr>
   <!--4、处理循环-->

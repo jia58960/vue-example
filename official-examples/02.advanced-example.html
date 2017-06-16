@@ -1,97 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>进阶例子</title>
-	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <meta charset="UTF-8">
+  <title>进阶例子</title>
+  <style>
+	  .custom-appear-class {
+	    opacity: 0;
+	  }
+	  
+	  .custom-appear-active-class {
+	    transition: opacity 1s;
+	  }
+  </style>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
 </head>
+
 <body>
-	<!--1、radio-->
-	<div id="app1">
-		<label for="male">
-		  <input v-model="sex" id="male" type="radio" value="男">男</label>
-		<label for="female">
-		  <input v-model="sex" id="female" type="radio" value="女">女</label>
-		<p>{{ sex }}</p>
-
-		<hr>
-
-		<!--2、dynamic checkbox-->
-		<template v-for="item in fruits">
-			<label id="item.id"><input id="item.id" v-model="choosedFruits" type="checkbox" :value="item.name">{{ item.name }}</label>
-			<!-- <label for="banana"><input id="banana" v-model="fruits" type="checkbox" value="香蕉">香蕉</label>
+  <!--1、form model-->
+  <div id="app1">
+    <label for="male">
+      <input v-model="sex" id="male" type="radio" value="男">男</label>
+    <label for="female">
+      <input v-model="sex" id="female" type="radio" value="女">女</label>
+    <p>{{ sex }}</p>
+    <hr>
+    <!--2、dynamic checkbox-->
+    <template v-for="item in fruits">
+      <label id="item.id">
+        <input id="item.id" v-model="choosedFruits" type="checkbox" :value="item.name">{{ item.name }}</label>
+      <!-- <label for="banana"><input id="banana" v-model="fruits" type="checkbox" value="香蕉">香蕉</label>
 			<label for="orange"><input id="orange" v-model="fruits" type="checkbox" value="桔子">桔子</label>
 			<label for="pear"><input id="pear" v-model="fruits" type="checkbox" value="梨子">梨子</label> -->
-		</template>
-		<p>{{ choosedFruits }}</p>
-		<hr>
+    </template>
+    <p>{{ choosedFruits }}</p>
+    <hr>
+    <!--3、dynamic select-->
+    <select name="" v-model="choosedPerson">
+      <option v-for="person in people" :value="person">{{ person }}</option>
+    </select>
+    <p>{{ choosedPerson }}</p>
+  </div>
+  <hr>
+  <!--2、在父组件中使用v-on监听子组件触发的事件，如果是监听的原生事件要用.native修饰符-->
+  <div id="app2">
+    <p>父组件中的bar值：{{ bar }}</p>
+    <p>父组件中的计数器：{{ total }}</p>
+    <button-count :title="ptitle" @increment-evt="incrementParent" @mouseover.native="mouseroverEvt"></button-count>
+    <button-count :title="ptitle2" @increment-evt="incrementParent" :foo.sync="bar"></button-count>
+  </div>
+  <hr>
+  <!--3、理解v-model在组建中的运用，另外理解$refs的用法-->
+  <div id="app3">
+    <currency-simple label="价格" v-model="price"></currency-simple>
+    <!-- 以上代码实际上等价于：<currency-simple :value="price" @input="price = $event.target.value"></currency-simple> -->
+    <currency-simple label="运费" v-model="shipping"></currency-simple>
+    <currency-simple label="打包费" v-model="handing"></currency-simple>
+    <currency-simple label="折扣" v-model="discount"></currency-simple>
+    <p>总价 ￥：{{ total }}</p>
+  </div>
+  <hr>
+  <!--4、simple slot-->
+  <div id="app4">
+    <children>
+      <span>在父组件写在子组件之间的内容</span> {{ message }}
+    </children>
+  </div>
+  <hr>
+  <!--5、具名（有名字的）slot-->
+  <div id="app5">
+    <children>
+      <span slot="foo">这是foo的内容，应当插入到slot为foo的插槽中</span>
+      <span slot="bar">这是bar的内容，应当插入到slot为bar的插槽中</span>
+    </children>
+  </div>
+  <hr>
+  <!--6、作用域插槽-->
+  <div id="app6">
+    <children>
+      <template scope="props"><span>来自父组件</span><span>{{ props.title }} - {{ props.text }}</span> </template>
+    </children>
+  </div>
+  <hr>
+  <!--7、结合velocity.js使用(使用javascript钩子的动画效果)-->
+  <div id="app7">
+    <button @click="show = !show">
+      Toggle
+    </button>
+    <transition v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:leave="leave" v-bind:css="false">
+      <p v-if="show">
+        Demo
+      </p>
+    </transition>
+  </div>
+  <hr>
+  <!--8、初始渲染过渡-->
+  <div id="app8">
+    <button @click="show = !show">点我切换</button>
+    <transition appear appear-class="custom-appear-class" appear-active-class="custom-appear-active-class">
+      <p v-if="show">看我~~</p>
+    </transition> 
+  </div>
+    <script type="text/javascript">
+    var app1 = new Vue({
+      el: '#app1',
+      data: {
+        sex: '男',
+        fruits: [{
+          id: 'apple',
+          name: '苹果'
+        }, {
+          id: 'banana',
+          name: '香蕉'
+        }, {
+          id: 'orange',
+          name: '橘子'
+        }],
+        choosedFruits: ['苹果'],
+        choosedPerson: '李四',
+        people: ['张三', '李四', '王五']
+      }
+    });
 
-		<!--3、dynamic select-->
-		<select name="" v-model="choosedPerson">
-			<option v-for="person in people" :value="person">{{ person }}</option>
-		</select>
-		<p>{{ choosedPerson }}</p>
-	</div>
-	<!--4、在父组件中使用v-on监听子组件触发的事件-->
-	<div id="app2">
-		<p>父组件中的计数器：{{ total }}</p>
-		<button-count	:title="ptitle" @increment-evt="incrementParent" @mouseover.native="mouseroverEvt"></button-count>
-		<button-count	@increment-evt="incrementParent"></button-count>
-	</div>
-	
+    var app2 = new Vue({
+      el: '#app2',
+      components: {
+        "button-count": {
+          props: {
+            title: {
+              type: String,
+              default: '初始化的标题'
+            },
+            foo: {
+              type: String
+            }
+          },
+          template: "<button :title='title' @click='incrementChild'>{{ count }}</button>",
+          data: function() {
+            return {
+              count: 0
+            };
+          },
+          methods: {
+            incrementChild: function() {
+              this.count += 1;
+              this.$emit('increment-evt');
+              this.$emit('mouseover'); //发射原生事件，父组件需要使用.native修饰来监听
+              this.$emit('update:foo', '子组件change bar的值'); //.sync的用法
+            }
+          }
+        }
+      },
+      data: {
+        total: 0,
+        ptitle: '父组件传递给子组件的标题',
+        ptitle2: '第二个子组件的标题',
+        bar: '父组件中bar的值'
+      },
+      methods: {
+        incrementParent: function() {
+          this.total++;
+        },
+        mouseroverEvt: function() {
+          this.ptitle = '改变了父组件的标题内容1111';
+          this.ptitle2 = '改变了父组件的标题内容22222';
+        }
+      }
+    });
 
-	<script type="text/javascript">
-		var app1 = new Vue({
-			el: '#app1',
-			data: {
-				sex:'男',
-				fruits: [{id:'apple',name:'苹果'},{id:'banana',name:'香蕉'},{id:'orange',name:'橘子'}],
-				choosedFruits:['苹果'],
-				choosedPerson:'李四',
-				people:['张三','李四','王五']
-			}
-		});
+    var app3 = new Vue({
+      el: '#app3',
+      components: {
+        'currency-simple': {
+          template: '<div><label v-if="label">{{ label }}</label>￥：<input ref="input" :value="value" @input="updateValue($event.target.value)" /><span>{{message}}</span></div>',
+          props: ['value', 'label'],
+          data: function() {
+            return {
+              message: '没有更新'
+            };
+          },
+          methods: {
+            updateValue: function(value) {
 
-		var app2 = new Vue({
-			el: '#app2',
-			components: {
-				"button-count": {
-					props: {
-						title: {
-							type: String,
-							//required: true,
-							default:'初始化的标题'
-						}
-					},
-					template: "<button title='title' @click='incrementChild'>{{ count }}</button>",
-					data: function() {
-						return {
-							count: 0
-						};
-					},
-					methods: {
-						incrementChild: function() {
-							this.count +=1;
-							this.$emit('increment-evt');
-							this.$emit('mouseover');
-						}
-					}
-				}
-			},
-			data: {
-				total: 0,
-				ptitle:'父组件传递给子组件的标题'
-			},
-			methods: {
-				incrementParent: function() {
-					console.log('aaa');
-					this.total++;
-				},
-				mouseroverEvt: function() {
-					this.ptitle = '改变了父组件的标题内容';
-				}
-			}
-		});
-	</script>
+              this.message = '更新了';
+              /*为了在数据变化之后等待 Vue 完成更新 DOM ，可以在数据变化之后立即使用 Vue.nextTick(callback) 。这样回调函数在 DOM 更新完成后就会调用*/
+              console.log(this.$el.textContent); // => '没有更新'
+              this.$nextTick(function() {
+                console.log(this.$el.textContent); // => '更新完成'
+              });
+
+              var formattedValue = value.trim().slice(0, value.indexOf('.') + 3); //取小数点后两位数
+              if (formattedValue !== value) {
+                this.$refs.input.value = formattedValue;
+              }
+              this.$emit('input', Number(formattedValue));
+            }
+          }
+        }
+      },
+      data: {
+        price: 0,
+        shipping: 0,
+        handing: 0,
+        discount: 0
+      },
+      computed: {
+        total: function() {
+          return this.price + this.shipping + this.handing - this.discount;
+        }
+      }
+    });
+
+    var app4 = new Vue({
+      el: '#app4',
+      data: {
+        message: '父组件中的message'
+      },
+      components: {
+        'children': {
+          template: '<div><h2>我是子组件的标题</h2><slot>只有在没有要分发的内容时才会显示.</slot></div>'
+        }
+      }
+    });
+
+    var app5 = new Vue({
+      el: '#app5',
+      components: {
+        'children': {
+          template: '<div><h2>我是子组件的标题</h2><slot name="foo">只有在没有要分发的内容时才会显示.</slot><slot name="bar">没有bar的内容渲染进来吗？</slot>	</div>'
+        }
+      }
+    });
+
+    var app6 = new Vue({
+      el: '#app6',
+      components: {
+        'children': {
+          template: '<div><h2>我是子组件的标题</h2><slot title="来自子组件的标题值" text="来自子组件的text值">子组件slot里的内容</slot></div>'
+        }
+      }
+    });
+
+    var app7 = new Vue({
+      el: '#app7',
+      data: {
+        show: false
+      },
+      methods: {
+        beforeEnter: function(el) {
+          el.style.opacity = 0
+          el.style.transformOrigin = 'left'
+        },
+        enter: function(el, done) {
+          Velocity(el, {
+            opacity: 1,
+            fontSize: '1.4em'
+          }, {
+            duration: 300
+          })
+          Velocity(el, {
+            fontSize: '1em'
+          }, {
+            complete: done
+          })
+        },
+        leave: function(el, done) {
+          Velocity(el, {
+            translateX: '15px',
+            rotateZ: '50deg'
+          }, {
+            duration: 600
+          })
+          Velocity(el, {
+            rotateZ: '100deg'
+          }, {
+            loop: 2
+          })
+          Velocity(el, {
+            rotateZ: '45deg',
+            translateY: '30px',
+            translateX: '30px',
+            opacity: 0
+          }, {
+            complete: done
+          })
+        }
+      }
+    });
+
+    var app8 = new Vue({
+    	el: '#app8',
+    	data: {
+    		show:true
+    	}
+    })
+    </script>
 </body>
+
 </html>
